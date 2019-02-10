@@ -1,6 +1,5 @@
 package mazeProject;
 
-
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,7 +8,7 @@ import java.util.Scanner;
 
 public class Maze {
 
-	private static int [][] MazeArray;
+	private static char [][] MazeArray;
 	private static int Rows;
 	private static int Cols;
 	private static Point end = new Point();
@@ -37,7 +36,7 @@ public class Maze {
 			// Creating MazeArray according to rows and columns from input file.
 			Rows = Integer.parseInt(MazeBuffer[1]);
 			Cols = Integer.parseInt(MazeBuffer[0]);
-			MazeArray = new int[Rows][Cols];
+			MazeArray = new char[Rows][Cols];
 
 			// Retrieving start locations and adding them to an X and Y coordinate.
 			String[] StartPoints = ReadFileContents.readLine().split(" ");
@@ -54,7 +53,7 @@ public class Maze {
 				Buffer2 = Buffer.split(" ");
 
 				for(int i = 0; i < Buffer2.length; i++) {
-					MazeArray[Counter][i] = Integer.parseInt(Buffer2[i]); // Adding file Maze to MazeArray.
+					MazeArray[Counter][i] = (char) Integer.parseInt(Buffer2[i]); // Adding file Maze to MazeArray.
 				}
 				Counter ++;
 				}
@@ -63,53 +62,66 @@ public class Maze {
 			catch(Exception e){
 				System.out.println(e); // No files found.
 			}
+		for(int i = 0; i < Rows; i++) {
+			for(int j = 0; j < Cols; j ++) {
+				if(MazeArray[i][j] == '1') {
+					MazeArray[i][j] = '#';
+				}
+				if(MazeArray[i][j] == '0') {
+					MazeArray[i][j] = ' ';
+				}
+			}
+		}
 
 		System.out.println(SolveMaze(start.x, start.y));
 	}
 
 
-	public static boolean SolveMaze(int x,int y) {
+	public static boolean SolveMaze(int x,int y) { // BFS - Breadth first search.
 
 		Print(); // Printing the maze
 
 		if(ReachedEnd(x,y)) {
-			MazeArray[x][y] = 5; // 5 represents the end
-			System.out.println(Arrays.deepToString(MazeArray));
+			MazeArray[x][y] = 'F'; // 5 represents the end
 			return true;
 
 		}else {
 
-			MazeArray[x][y] = 8; // Marking the path with 8's
+			MazeArray[x][y] = 'x'; // Marking the path with 8's
 			start.x = x;
 			start.y = y;
-
+			
 			// Checking all directions
 			if(MazeArray[x][y - 1] == 0 ) { 
 				System.out.println("Left");
+				System.out.println();
 				SolveMaze(x, y - 1);
 			}
 			
 			if(MazeArray[x + 1][y] == 0) {
 				System.out.println("Down");
+				System.out.println();
 				SolveMaze(x + 1, y);
 			}
 			
 			if(MazeArray[x - 1][y] == 0 ) {
 				System.out.println("Up");
+				System.out.println();
 				SolveMaze(x - 1, y);
 			}
 			
 			if(MazeArray[x][y + 1] == 0 ) {
 				System.out.println("Right");
+				System.out.println();
 				SolveMaze(x, y + 1);
 			}
 		}
-		return false;
+		MazeArray[x][y] = ' ';
+		return true;
 	}
 
-	
-	public static boolean ReachedEnd(int x, int y) {
 
+	public static boolean ReachedEnd(int x, int y) {
 		if(x == end.x && y == end.y) { // Check if the end has been reached.
 			return true;
 		}else {
@@ -117,9 +129,16 @@ public class Maze {
 		}
 	}
 
+	
 	public static void Print() {
-		System.out.println(Arrays.deepToString(MazeArray));
-	}
+		for (int i = 0; i < Rows; i++) {
+			for (int a = 0; a < Cols; a++){
+				System.out.print(MazeArray[i][a]);
+				}
+	           System.out.println();
+	        }
+	    }
+	
 
 	public static void main(String[] args) {
 		ReadFileMakeMaze();
