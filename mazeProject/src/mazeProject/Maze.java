@@ -2,6 +2,7 @@ package mazeProject;
 
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -17,9 +18,14 @@ public class Maze {
 	public static void ReadFileMakeMaze() {
 
 		Scanner in = new Scanner(System.in);
+		
+		System.out.println("Enter File Path: "); // Choose File Path
+		String filePath = in.nextLine();
+		
 		System.out.print("Select File: "); // Choose file
 		String fileName = in.nextLine();
-		fileName = fileName.trim();
+		
+		File file = new File(filePath + fileName);
 
 		String Buffer = "";
 		String[] Buffer2;
@@ -29,7 +35,7 @@ public class Maze {
 		try {
 
 			// Read input file
-			BufferedReader ReadFileContents = new BufferedReader(new FileReader(fileName+".txt"));
+			BufferedReader ReadFileContents = new BufferedReader(new FileReader(file+".txt"));
 			Buffer = ReadFileContents.readLine();
 			MazeBuffer = Buffer.split(" ");
 
@@ -65,7 +71,7 @@ public class Maze {
 		for(int i = 0; i < Rows; i++) {
 			for(int j = 0; j < Cols; j ++) {
 				if(MazeArray[i][j] == '1') {
-					MazeArray[i][j] = '#';
+					MazeArray[i][j] = '-';
 				}
 				if(MazeArray[i][j] == '0') {
 					MazeArray[i][j] = ' ';
@@ -80,21 +86,25 @@ public class Maze {
 	public static boolean SolveMaze(int x,int y) { // BFS - Breadth first search.
 
 		Print(); // Printing the maze
-
+		
+		if(y < 0) { y = Cols - 1;}
+		if(x < 0) {x = Rows -1;}
+		if(x > Rows - 1) {x = 0;}
+		
 		if(ReachedEnd(x,y)) {
-			MazeArray[x][y] = 'F'; // 5 represents the end
+			MazeArray[x][y] = 'F'; // F represents the end
 			return true;
 
 		}else {
 
-			MazeArray[x][y] = 'x'; // Marking the path with 8's
+			MazeArray[x][y] = 'x'; // Marking the path with x's
 			start.x = x;
 			start.y = y;
 			
 			// Checking all directions
 			if(MazeArray[x][y - 1] == 0 ) { 
 				System.out.println("Left");
-				System.out.println();
+				System.out.println(); // Spaces between 
 				SolveMaze(x, y - 1);
 			}
 			
